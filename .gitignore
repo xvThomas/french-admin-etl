@@ -1,0 +1,39 @@
+# Binaires
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Fichiers de test
+*.test
+*.out
+
+# Dépendances
+vendor/
+
+# Données
+data/
+*.geojson
+*.shp
+*.shx
+*.dbf
+*.prj
+*.gpkg
+
+# Configuration locale
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
