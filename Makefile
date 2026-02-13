@@ -48,7 +48,9 @@ download-epci: ## Download EPCI data
 
 download-population: ## Download population data
 	@echo "$(COLOR_YELLOW)Downloading population data...$(COLOR_RESET)"
-	@curl -o data/population.csv 'https://api.insee.fr/melodi/data/DS_RP_POPULATION_PRINC'
+	@curl -o data/DS_RP_POPULATION_PRINC_2022.zip 'https://api.insee.fr/melodi/file/DS_RP_POPULATION_PRINC/DS_RP_POPULATION_PRINC_2022_CSV_FR'
+	@unzip -o data/DS_RP_POPULATION_PRINC_2022.zip -d data
+	@rm -f data/DS_RP_POPULATION_PRINC_2022.zip
 	@echo "$(COLOR_GREEN)✓ Population data downloaded$(COLOR_RESET)"
 
 download-data: ## Download all data
@@ -76,6 +78,21 @@ deps: ## Install dependencies
 test: ## Run tests
 	@echo "$(COLOR_YELLOW)Running tests...$(COLOR_RESET)"
 	@go test -v ./...
+
+test-coverage: ## Run tests with coverage report
+	@echo "$(COLOR_YELLOW)Running tests with coverage...$(COLOR_RESET)"
+	@go test -v -coverprofile=coverage.out ./...
+	@echo ""
+	@echo "=== Coverage summary ==="
+	@go tool cover -func=coverage.out | tail -1
+	@echo ""
+	@echo "To view detailed HTML coverage report, run:"
+	@echo "  go tool cover -html=coverage.out"
+	@echo "Coverage report saved to coverage.out"
+
+coverage: ## Show detailed HTML coverage report
+	@echo "$(COLOR_YELLOW)Showing detailed HTML coverage report...$(COLOR_RESET)"
+	@go tool cover -html=coverage.out
 
 benchmark: ## Run benchmarks
 	@echo "$(COLOR_YELLOW)Running benchmarks...$(COLOR_RESET)"

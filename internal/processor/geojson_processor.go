@@ -7,7 +7,9 @@ import (
 	"sync"
 	"time"
 
+	"french_admin_etl/internal/extractors"
 	"french_admin_etl/internal/infrastructure/config"
+	"french_admin_etl/internal/transformers"
 	"french_admin_etl/internal/model"
 )
 
@@ -15,7 +17,7 @@ type GeoJSONETLProcessor[T any, E any] struct {
 	config             *config.Config
 	name               string                                   // name for logging
 	factory            func() T                                 // Factory function to create empty instances for JSON unmarshalling
-	extractor          *model.GeoJSONExtractor[T]               // Embedded extractor to read GeoJSON features
+	extractor          *extractors.GeoJSONExtractor[T]               // Embedded extractor to read GeoJSON features
 	geoJSONTransformer model.GeoJSONTransformer[T, E]           // Transformer to convert GeoJSON features to entities with WKB
 	entityLoader       model.EntityWithGeoJSONGeometryLoader[E] // Loader to load entities with WKB into the database
 }
@@ -31,8 +33,8 @@ func NewGeoJSONETLProcessor[T any, E any](
 		config:             config,
 		name:               name,
 		factory:            factory,
-		extractor:          model.NewGeoJSONExtractor[T](),
-		geoJSONTransformer: model.NewGeoJSONTransformer(mapper),
+		extractor:          extractors.NewGeoJSONExtractor[T](),
+		geoJSONTransformer: transformers.NewGeoJSONTransformer(mapper),
 		entityLoader:       loader,
 	}
 }

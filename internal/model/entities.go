@@ -7,6 +7,8 @@ import (
 	"github.com/twpayne/go-geom/encoding/geojson"
 )
 
+type CSVRecord = map[string]string
+
 type GeoJSONFeature[T any] struct {
 	Type       string           `json:"type"`
 	Properties T                `json:"properties"`
@@ -14,8 +16,8 @@ type GeoJSONFeature[T any] struct {
 }
 
 type EntityWithGeoJSONGeometry[T any] struct {
-	Data         T      `json:"data"`
-	GeometryJSON string `json:"geometry_json"`
+	Data            T      `json:"data"`
+	GeoJSONGeometry string `json:"geometry_json"`
 }
 
 func ConvertGeoJSONGeometryToBytes(geoJSONGeometry *geojson.Geometry) (string, error) {

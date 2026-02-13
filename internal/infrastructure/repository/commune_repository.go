@@ -2,9 +2,9 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"french_admin_etl/internal/infrastructure/entities"
 	"french_admin_etl/internal/model"
-	"fmt"
 	"log/slog"
 )
 
@@ -67,7 +67,7 @@ func (l *communeRepository) Load(
 
 	for i, entity := range entities {
 		// Retrieve geometry
-		if entity.GeometryJSON == "" {
+		if entity.GeoJSONGeometry == "" {
 			slog.Warn("Missing geometry", "entity", "commune", "code", entity.Data.Code)
 			failed++
 			continue
@@ -88,7 +88,7 @@ func (l *communeRepository) Load(
 			entity.Data.CodeEPCI,
 			entity.Data.CodeDepartement,
 			entity.Data.CodeRegion,
-			entity.GeometryJSON,
+			entity.GeoJSONGeometry,
 		)
 		if err != nil {
 			slog.Error("Insert error", "entity", "commune", "code", entity.Data.Code, "error", err)

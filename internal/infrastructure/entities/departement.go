@@ -26,51 +26,10 @@ func NewDepartementMapper() *departementMapper {
 
 var _ model.Mapper[DepartementProperties, DepartementEntity] = (*departementMapper)(nil)
 
-func (m *departementMapper) Map(input DepartementProperties) (DepartementEntity, error) {
-	return DepartementEntity{
+func (m *departementMapper) Map(input DepartementProperties) (*DepartementEntity, error) {
+	return &DepartementEntity{
 		Code:       input.Code,
 		Nom:        input.Nom,
 		CodeRegion: input.Region,
 	}, nil
 }
-
-/*
-type departementExtractor = model.GeoJSONExtractor[DepartementProperties]
-
-func NewDepartementExtractor() departementExtractor {
-	return *model.NewGeoJSONExtractor[DepartementProperties]()
-}
-
-type departementTransformer struct{}
-
-func NewDepartementTransformer() *departementTransformer {
-	return &departementTransformer{}
-}
-
-var _ model.GeoJSONTransformer[DepartementProperties, DepartementEntity] = (*departementTransformer)(nil)
-
-func (t *departementTransformer) Transform(features []GeoJsonDepartementFeature) ([]DepartementWithGeometry, error) {
-	var entities []DepartementWithGeometry
-	for _, feature := range features {
-		geomJSON, err := model.ConvertGeoJSONGeometryToBytes(&feature.Geometry)
-		if err != nil {
-			return nil, err
-		}
-		if geomJSON == "" {
-			continue
-		}
-
-		entity := DepartementWithGeometry{
-			Data: DepartementEntity{
-				Code:       feature.Properties.Code,
-				Nom:        feature.Properties.Nom,
-				CodeRegion: feature.Properties.Region,
-			},
-			GeometryJSON: geomJSON,
-		}
-		entities = append(entities, entity)
-	}
-
-	return entities, nil
-}
-*/

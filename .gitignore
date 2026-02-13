@@ -14,12 +14,6 @@ vendor/
 
 # Données
 data/
-*.geojson
-*.shp
-*.shx
-*.dbf
-*.prj
-*.gpkg
 
 # Configuration locale
 .env

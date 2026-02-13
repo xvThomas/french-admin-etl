@@ -24,50 +24,9 @@ func NewRegionMapper() *regionMapper {
 
 var _ model.Mapper[RegionProperties, RegionEntity] = (*regionMapper)(nil)
 
-func (m *regionMapper) Map(input RegionProperties) (RegionEntity, error) {
-	return RegionEntity{
+func (m *regionMapper) Map(input RegionProperties) (*RegionEntity, error) {
+	return &RegionEntity{
 		Code: input.Code,
 		Nom:  input.Nom,
 	}, nil
 }
-
-/*	
-
-type regionExtractor = model.GeoJSONExtractor[RegionProperties]
-
-func NewRegionExtractor() regionExtractor {
-	return *model.NewGeoJSONExtractor[RegionProperties]()
-}
-
-type regionTransformer struct{}
-
-func NewRegionTransformer() *regionTransformer {
-	return &regionTransformer{}
-}
-
-var _ model.GeoJSONTransformer[RegionProperties, RegionEntity] = (*regionTransformer)(nil)
-
-func (t *regionTransformer) Transform(features []GeoJsonRegionFeature) ([]RegionWithGeometry, error) {
-	var entities []RegionWithGeometry
-	for _, feature := range features {
-		geomJSON, err := model.ConvertGeoJSONGeometryToBytes(&feature.Geometry)
-		if err != nil {
-			return nil, err
-		}
-		if geomJSON == "" {
-			continue
-		}
-
-		entity := RegionWithGeometry{
-			Data: RegionEntity{
-				Code: feature.Properties.Code,
-				Nom:  feature.Properties.Nom,
-			},
-			GeometryJSON: geomJSON,
-		}
-		entities = append(entities, entity)
-	}
-
-	return entities, nil
-}
-*/

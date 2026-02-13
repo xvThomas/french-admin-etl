@@ -22,14 +22,6 @@ type CommuneEntity struct {
 
 type CommuneWithGeometry = model.EntityWithGeoJSONGeometry[CommuneEntity]
 
-/*
-type communeExtractor = model.GeoJSONExtractor[CommuneProperties]
-
-func NewCommuneExtractor() communeExtractor {
-	return *model.NewGeoJSONExtractor[CommuneProperties]()
-}
-*/
-
 type communeMapper struct{}
 
 func NewCommuneMapper() *communeMapper {
@@ -38,8 +30,8 @@ func NewCommuneMapper() *communeMapper {
 
 var _ model.Mapper[CommuneProperties, CommuneEntity] = (*communeMapper)(nil)
 
-func (m *communeMapper) Map(input CommuneProperties) (CommuneEntity, error) {
-	return CommuneEntity{
+func (m *communeMapper) Map(input CommuneProperties) (*CommuneEntity, error) {
+	return &CommuneEntity{
 		Code:            input.Code,
 		Nom:             input.Nom,
 		CodeEPCI:        input.EPCI,
@@ -47,40 +39,3 @@ func (m *communeMapper) Map(input CommuneProperties) (CommuneEntity, error) {
 		CodeRegion:      input.Region,
 	}, nil
 }
-
-/*
-type communesTransformer struct{}
-
-func NewCommunesTransformer() *communesTransformer {
-	return &communesTransformer{}
-}
-
-var _ model.GeoJSONTransformer[CommunesProperties, CommunesEntity] = (*communesTransformer)(nil)
-
-func (t *communesTransformer) Transform(features []GeoJsonCommunesFeature) ([]CommunesWithGeometry, error) {
-	var entities []CommunesWithGeometry
-	for _, feature := range features {
-		geomJSON, err := model.ConvertGeoJSONGeometryToBytes(&feature.Geometry)
-		if err != nil {
-			return nil, err
-		}
-		if geomJSON == "" {
-			continue
-		}
-
-		entity := CommunesWithGeometry{
-			Data: CommunesEntity{
-				Code:            feature.Properties.Code,
-				Nom:             feature.Properties.Nom,
-				CodeEPCI:        feature.Properties.EPCI,
-				CodeDepartement: feature.Properties.Departement,
-				CodeRegion:      feature.Properties.Region,
-			},
-			GeometryJSON: geomJSON,
-		}
-		entities = append(entities, entity)
-	}
-
-	return entities, nil
-}
-	*/

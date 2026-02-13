@@ -1,4 +1,4 @@
-package model
+package extractors
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"french_admin_etl/internal/model"
 )
 
 type GeoJSONExtractor[T any] struct {
@@ -28,7 +29,7 @@ func (e *GeoJSONExtractor[T]) loadFile(filePath string) (file *os.File, decoder 
 }
 
 // parse reads the GeoJSON file and sends features to the channel
-func (e *GeoJSONExtractor[T]) parse(ctx context.Context, decoder *json.Decoder, featureChan chan GeoJSONFeature[T], factory func() T) {
+func (e *GeoJSONExtractor[T]) parse(ctx context.Context, decoder *json.Decoder, featureChan chan model.GeoJSONFeature[T], factory func() T) {
 	for decoder.More() {
 		// Read key
 		token, err := decoder.Token()
@@ -53,7 +54,7 @@ func (e *GeoJSONExtractor[T]) parse(ctx context.Context, decoder *json.Decoder, 
 			// Stream each feature
 			for decoder.More() {
 				// Use factory to create a new instance with the correct type
-				feature := GeoJSONFeature[T]{Properties: factory()}
+				feature := model.GeoJSONFeature[T]{Properties: factory()}
 				if err := decoder.Decode(&feature); err != nil {
 					slog.Error("Decoding feature", "error", err)
 					return
@@ -77,7 +78,7 @@ func (e *GeoJSONExtractor[T]) parse(ctx context.Context, decoder *json.Decoder, 
 	}
 }
 
-func (e *GeoJSONExtractor[T]) Extract(ctx context.Context, filePath string, batchSize int, factory func() T) (chan GeoJSONFeature[T], error) {
+func (e *GeoJSONExtractor[T]) Extract(ctx context.Context, filePath string, batchSize int, factory func() T) (chan model.GeoJSONFeature[T], error) {
 	file, decoder, err := e.loadFile(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("error opening file: %w", err)
@@ -90,7 +91,7 @@ func (e *GeoJSONExtractor[T]) Extract(ctx context.Context, filePath string, batc
 	}
 
 	// Create channel to stream features
-	featureChan := make(chan GeoJSONFeature[T], batchSize*2)
+	featureChan := make(chan model.GeoJSONFeature[T], batchSize*2)
 
 	go func() {
 		defer func() {

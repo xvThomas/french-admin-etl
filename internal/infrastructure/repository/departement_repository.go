@@ -2,9 +2,9 @@ package repository
 
 import (
 	"context"
-	"french_admin_etl/internal/model"
 	"fmt"
 	"french_admin_etl/internal/infrastructure/entities"
+	"french_admin_etl/internal/model"
 	"log/slog"
 )
 
@@ -47,7 +47,7 @@ func (l *departementRepository) Load(
 
 	for i, entity := range entities {
 		// Retrieve geometry
-		if entity.GeometryJSON == "" {
+		if entity.GeoJSONGeometry == "" {
 			slog.Warn("Missing geometry", "entity", "departement", "code", entity.Data.Code)
 			failed++
 			continue
@@ -66,7 +66,7 @@ func (l *departementRepository) Load(
 			entity.Data.Code,
 			entity.Data.Nom,
 			entity.Data.CodeRegion,
-			entity.GeometryJSON,
+			entity.GeoJSONGeometry,
 		)
 		if err != nil {
 			slog.Error("Insert error", "entity", "departement", "code", entity.Data.Code, "error", err)

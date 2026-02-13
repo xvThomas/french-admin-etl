@@ -40,67 +40,85 @@ func main() {
 		os.Exit(1)
 	}
 
-	regionProcess := processor.NewGeoJSONETLProcessor(
+	/*
+		regionProcess := processor.NewGeoJSONETLProcessor(
+			config,
+			"Régions",
+			func() entities.RegionProperties {
+				return entities.RegionProperties{}
+			},
+			entities.NewRegionMapper(),
+			repository.NewRegionRepository(databaseManager),
+		)
+
+		err = regionProcess.Run(ctx, "./data/regions-1000m.geojson")
+		if err != nil {
+			slog.Error("❌ Failed to run region process", "error", err)
+			os.Exit(1)
+		}
+
+		departementProcess := processor.NewGeoJSONETLProcessor(
+			config,
+			"Departements",
+			func() entities.DepartementProperties {
+				return entities.DepartementProperties{}
+			},
+			entities.NewDepartementMapper(),
+			repository.NewDepartementRepository(databaseManager),
+		)
+
+		err = departementProcess.Run(ctx, "./data/departements-1000m.geojson")
+		if err != nil {
+			slog.Error("❌ Failed to run departement process", "error", err)
+			os.Exit(1)
+		}
+
+		epciProcess := processor.NewGeoJSONETLProcessor(
+			config,
+			"EPCI",
+			func() entities.EPCIProperties {
+				return entities.EPCIProperties{}
+			},
+			entities.NewEPCIMapper(),
+			repository.NewEPCIRepository(databaseManager),
+		)
+
+		err = epciProcess.Run(ctx, "./data/epci-1000m.geojson")
+		if err != nil {
+			slog.Error("❌ Failed to run epci process", "error", err)
+			os.Exit(1)
+		}
+
+		communesProcess := processor.NewGeoJSONETLProcessor(
+			config,
+			"Communes",
+			func() entities.CommuneProperties {
+				return entities.CommuneProperties{}
+			},
+			entities.NewCommuneMapper(),
+			repository.NewCommuneRepository(databaseManager),
+		)
+
+		err = communesProcess.Run(ctx, "./data/communes-1000m.geojson")
+		if err != nil {
+			slog.Error("❌ Failed to run communes process", "error", err)
+			os.Exit(1)
+		}
+	*/
+
+	communePopulationProcess := processor.NewCsvETLProcessor(
 		config,
-		"Régions",
-		func() entities.RegionProperties {
-			return entities.RegionProperties{}
-		},
-		entities.NewRegionMapper(),
-		repository.NewRegionRepository(databaseManager),
+		"Population des communes",
+		';',
+		entities.CommunePopulationPrincFilter,
+		entities.NewCommunePopulationMapper(),
+		repository.NewCommunePopulationRepository(databaseManager),
 	)
 
-	err = regionProcess.Run(ctx, "./data/regions-1000m.geojson")
+	err = communePopulationProcess.Run(ctx, "./data/DS_RP_POPULATION_PRINC_2022_data.csv")
+	//err = communePopulationProcess.Run(ctx, "./data/test.csv")
 	if err != nil {
-		slog.Error("❌ Failed to run region process", "error", err)
-		os.Exit(1)
-	}
-
-	departementProcess := processor.NewGeoJSONETLProcessor(
-		config,
-		"Departements",
-		func() entities.DepartementProperties {
-			return entities.DepartementProperties{}
-		},
-		entities.NewDepartementMapper(),
-		repository.NewDepartementRepository(databaseManager),
-	)
-
-	err = departementProcess.Run(ctx, "./data/departements-1000m.geojson")
-	if err != nil {
-		slog.Error("❌ Failed to run departement process", "error", err)
-		os.Exit(1)
-	}
-
-	epciProcess := processor.NewGeoJSONETLProcessor(
-		config,
-		"EPCI",
-		func() entities.EPCIProperties {
-			return entities.EPCIProperties{}
-		},
-		entities.NewEPCIMapper(),
-		repository.NewEPCIRepository(databaseManager),
-	)
-
-	err = epciProcess.Run(ctx, "./data/epci-1000m.geojson")
-	if err != nil {
-		slog.Error("❌ Failed to run epci process", "error", err)
-		os.Exit(1)
-	}
-
-	communesProcess := processor.NewGeoJSONETLProcessor(
-		config,
-		"Communes",
-		func() entities.CommuneProperties {
-			return entities.CommuneProperties{}
-		},
-		entities.NewCommuneMapper(),
-		repository.NewCommuneRepository(databaseManager),
-	)
-
-	err = communesProcess.Run(ctx, "./data/communes-1000m.geojson")
-	if err != nil {
-		slog.Error("❌ Failed to run communes process", "error", err)
+		slog.Error("❌ Failed to run commune population process", "error", err)
 		os.Exit(1)
 	}
 

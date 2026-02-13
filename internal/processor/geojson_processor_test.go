@@ -3,7 +3,6 @@ package processor
 import (
 	"context"
 	"log"
-	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -23,7 +22,7 @@ func NewMockEntityLoader() *mockEntityLoader {
 
 func (m *mockEntityLoader) Load(_ context.Context, entities []entities.RegionWithGeometry) (int, error) {
 	for _, entity := range entities {
-		log.Printf("Transformed entity: %v with GeoJSON size %d bytes", entity.Data, len(entity.GeometryJSON))
+		log.Printf("Transformed entity: %v with GeoJSON size %d bytes", entity.Data, len(entity.GeoJSONGeometry))
 	}
 	return len(entities), nil
 }
@@ -252,6 +251,6 @@ func TestGeoJSONETLProcessor_RunEmptyFeatureCollection(t *testing.T) {
 }
 
 // Helper function to write test files
-func writeTestFile(path string, content []byte) error {
-	return os.WriteFile(path, content, 0644)
-}
+//func writeTestFile(path string, content []byte) error {
+//	return os.WriteFile(path, content, 0644)
+//}
