@@ -1,6 +1,6 @@
 package entities
 
-import "french_admin_etl/internal/model"
+import "french-admin-etl/internal/model"
 
 // CommuneProperties represents the properties of a commune in the GeoJSON file.
 type CommuneProperties struct {

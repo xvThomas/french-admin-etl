@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	"fmt"
-	"french_admin_etl/internal/infrastructure/entities"
-	"french_admin_etl/internal/model"
+	"french-admin-etl/internal/infrastructure/entities"
+	"french-admin-etl/internal/model"
 	"log/slog"
 )
 

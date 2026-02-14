@@ -2,7 +2,7 @@
 package filters
 
 import (
-	"french_admin_etl/internal/model"
+	"french-admin-etl/internal/model"
 	"slices"
 )
 

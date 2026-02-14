@@ -1,6 +1,6 @@
 package entities
 
-import "french_admin_etl/internal/model"
+import "french-admin-etl/internal/model"
 
 // RegionProperties represents the properties of a region in the GeoJSON file.
 type RegionProperties struct {

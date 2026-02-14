@@ -1,6 +1,6 @@
 package entities
 
-import "french_admin_etl/internal/model"
+import "french-admin-etl/internal/model"
 
 // DepartementProperties represents the properties of a department in the GeoJSON file
 type DepartementProperties struct {

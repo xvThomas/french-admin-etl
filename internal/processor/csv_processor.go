@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
-	"french_admin_etl/internal/extractors"
-	"french_admin_etl/internal/infrastructure/config"
-	"french_admin_etl/internal/model"
-	"french_admin_etl/internal/transformers"
+	"french-admin-etl/internal/extractors"
+	"french-admin-etl/internal/infrastructure/config"
+	"french-admin-etl/internal/model"
+	"french-admin-etl/internal/transformers"
 )
 
 // CsvETLProcessor handles the ETL process for CSV files with parallel processing.

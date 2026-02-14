@@ -1,4 +1,4 @@
-module french_admin_etl
+module french-admin-etl
 
 go 1.24.0
 

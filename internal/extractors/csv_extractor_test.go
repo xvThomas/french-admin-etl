@@ -2,7 +2,7 @@ package extractors
 
 import (
 	"context"
-	"french_admin_etl/internal/model"
+	"french-admin-etl/internal/model"
 	"os"
 	"path/filepath"
 	"testing"

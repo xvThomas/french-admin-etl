@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"french_admin_etl/internal/infrastructure/config"
-	"french_admin_etl/internal/infrastructure/entities"
-	"french_admin_etl/internal/model"
+	"french-admin-etl/internal/infrastructure/config"
+	"french-admin-etl/internal/infrastructure/entities"
+	"french-admin-etl/internal/model"
 )
 
 type mockEntityLoader struct{}

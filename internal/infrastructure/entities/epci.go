@@ -1,6 +1,6 @@
 package entities
 
-import "french_admin_etl/internal/model"
+import "french-admin-etl/internal/model"
 
 // EPCIProperties represents the properties of an EPCI in the GeoJSON file.
 type EPCIProperties struct {

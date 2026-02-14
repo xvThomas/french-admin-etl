@@ -8,11 +8,11 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"french_admin_etl/internal/infrastructure/config"
-	"french_admin_etl/internal/infrastructure/entities"
-	_ "french_admin_etl/internal/infrastructure/logger"
-	"french_admin_etl/internal/infrastructure/repository"
-	"french_admin_etl/internal/processor"
+	"french-admin-etl/internal/infrastructure/config"
+	"french-admin-etl/internal/infrastructure/entities"
+	_ "french-admin-etl/internal/infrastructure/logger"
+	"french-admin-etl/internal/infrastructure/repository"
+	"french-admin-etl/internal/processor"
 )
 
 func main() {

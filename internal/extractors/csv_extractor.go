@@ -9,7 +9,7 @@ import (
 	"log/slog"
 	"os"
 
-	"french_admin_etl/internal/model"
+	"french-admin-etl/internal/model"
 )
 
 // CSVExtractor extracts records from CSV files with configurable delimiters and filters.

@@ -3,8 +3,8 @@ package entities
 
 import (
 	"fmt"
-	filters "french_admin_etl/internal/Filters"
-	"french_admin_etl/internal/model"
+	filters "french-admin-etl/internal/Filters"
+	"french-admin-etl/internal/model"
 	"math"
 	"strconv"
 	"strings"

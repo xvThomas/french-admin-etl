@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"french_admin_etl/internal/model"
+	"french-admin-etl/internal/model"
 	"log/slog"
 	"os"
 )

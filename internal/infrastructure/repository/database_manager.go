@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"french_admin_etl/internal/infrastructure/config"
+	"french-admin-etl/internal/infrastructure/config"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
