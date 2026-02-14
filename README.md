@@ -6,7 +6,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/xvThomas/french-admin-etl)](https://goreportcard.com/report/github.com/xvThomas/french-admin-etl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-ETL tool in Go for loading French administrative reference data (communes, départements, régions, EPCI) into PostGIS.
+ETL tool in Go for loading French administrative reference data (communes, départements, régions, EPCI) and demographic population data into PostGIS.
 
 ## Prerequisites
 
@@ -58,10 +58,11 @@ make deps
 ### Download Data
 
 ```bash
-make download-communes      # Download communes data (1000m, 100m, 5m precision)
-make download-departements  # Download départements data
 make download-regions       # Download régions data
+make download-departements  # Download départements data
 make download-epci          # Download EPCI data
+make download-communes      # Download communes data (1000m, 100m, 5m precision)
+make download-population:   # Download population data
 ```
 
 ### Build & Run
@@ -95,17 +96,11 @@ This project includes a comprehensive GitHub Actions pipeline that runs on every
 - **Linting**: Code quality checks with golangci-lint
 - **Build**: Binary compilation and artifact storage
 
-### Setup Instructions
+### View Results in GitHub
 
-1. **Enable Codecov** (optional for coverage badge):
-   - Go to [codecov.io](https://codecov.io/) and sign in with GitHub
-   - Enable the repository `xvThomas/french-admin-etl`
-   - No token needed for public repos
-
-2. **View Results**:
-   - CI status: `Actions` tab in GitHub
-   - Security alerts: `Security` → `Code scanning` tab
-   - Coverage reports: Click the codecov badge
+- CI status: `Actions` tab in GitHub
+- Security alerts: `Security` → `Code scanning` tab
+- Coverage reports: Click the codecov badge
 
 ### Local Quality Checks
 
@@ -123,10 +118,14 @@ golangci-lint run      # Run linter (requires golangci-lint installation)
 - Automatic spatial indexes
 - Upsert support (INSERT ... ON CONFLICT)
 - Error handling and retry logic
+- Demographic population data processing (by age and gender)
 
 ## Database Structure
 
-The ETL automatically creates the necessary tables with PostGIS geometry columns and spatial indexes. Tables created include `communes`, `departements`, `regions`, and `epci` with their respective administrative and geometric properties.
+The ETL automatically creates the necessary tables with PostGIS geometry columns and spatial indexes. Tables created include:
+
+- **Administrative data**: `communes`, `departements`, `regions`, `epci` with their respective administrative and geometric properties
+- **Demographic data**: `commune_population` with population statistics by age groups and gender for each commune
 
 ## Performance Tuning
 
@@ -146,4 +145,6 @@ POSTGRES_MAX_OPEN_CONNS=50
 
 ## License
 
-MIT
+MIT License - see [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2026 Xavier Thomas
