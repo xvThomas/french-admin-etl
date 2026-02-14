@@ -4,20 +4,23 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"french_admin_etl/internal/model"
 	"log/slog"
 	"os"
-	"french_admin_etl/internal/model"
 )
 
+// GeoJSONExtractor extracts features from GeoJSON files using streaming parsing.
 type GeoJSONExtractor[T any] struct {
 }
 
+// NewGeoJSONExtractor creates a new GeoJSON extractor for the specified type.
 func NewGeoJSONExtractor[T any]() *GeoJSONExtractor[T] {
 	return &GeoJSONExtractor[T]{}
 }
 
 func (e *GeoJSONExtractor[T]) loadFile(filePath string) (file *os.File, decoder *json.Decoder, err error) {
 	// Open file for streaming
+	// #nosec G304 -- filePath is controlled by the application, not user input
 	file, err = os.Open(filePath)
 	if err != nil {
 		return nil, nil, err
@@ -67,17 +70,17 @@ func (e *GeoJSONExtractor[T]) parse(ctx context.Context, decoder *json.Decoder, 
 				}
 			}
 			return
-		} else {
-			// Skip other fields (type, etc.)
-			var discard any
-			if err := decoder.Decode(&discard); err != nil {
-				slog.Warn("Skipping field", "field", key, "error", err)
-				return
-			}
+		}
+		// Skip other fields (type, etc.)
+		var discard any
+		if err := decoder.Decode(&discard); err != nil {
+			slog.Warn("Skipping field", "field", key, "error", err)
+			return
 		}
 	}
 }
 
+// Extract reads a GeoJSON file and streams features through a channel.
 func (e *GeoJSONExtractor[T]) Extract(ctx context.Context, filePath string, batchSize int, factory func() T) (chan model.GeoJSONFeature[T], error) {
 	file, decoder, err := e.loadFile(filePath)
 	if err != nil {
@@ -86,7 +89,7 @@ func (e *GeoJSONExtractor[T]) Extract(ctx context.Context, filePath string, batc
 
 	// Read opening brace
 	if _, err := decoder.Token(); err != nil {
-		file.Close()
+		_ = file.Close()
 		return nil, fmt.Errorf("error reading opening brace: %w", err)
 	}
 
@@ -95,7 +98,7 @@ func (e *GeoJSONExtractor[T]) Extract(ctx context.Context, filePath string, batc
 
 	go func() {
 		defer func() {
-			file.Close() // Close file when goroutine finishes reading
+			_ = file.Close() // Close file when goroutine finishes reading
 			close(featureChan)
 		}()
 		e.parse(ctx, decoder, featureChan, factory)

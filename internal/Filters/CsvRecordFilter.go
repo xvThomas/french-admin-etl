@@ -1,29 +1,25 @@
+// Package filters provides utilities for filtering CSV records based on custom criteria.
 package filters
 
-import "slices"
+import (
+	"french_admin_etl/internal/model"
+	"slices"
+)
 
-type CsvRecordFilter interface {
-	Filter(record map[string]string) bool
-}
-
-type csvRecordFilter struct {
+type csvRecordFilterFromAllowList struct {
 	allowList map[string][]string
 }
 
-var _ CsvRecordFilter = (*csvRecordFilter)(nil)
+var _ model.CsvRecordFilter = (*csvRecordFilterFromAllowList)(nil)
 
-func NewCsvRecordFilter() *csvRecordFilter {
-	return &csvRecordFilter{
-		allowList: make(map[string][]string),
+// NewCsvRecordFilterFromAllowList creates a new CSV record filter with the provided allowlist.
+func NewCsvRecordFilterFromAllowList(allowList map[string][]string) model.CsvRecordFilter {
+	return &csvRecordFilterFromAllowList{
+		allowList: allowList,
 	}
 }
 
-func (f *csvRecordFilter) AddToAllowList(column string, value []string) *csvRecordFilter {
-	f.allowList[column] = value
-	return f
-}
-
-func (f *csvRecordFilter) Filter(record map[string]string) bool {
+func (f *csvRecordFilterFromAllowList) Filter(record map[string]string) bool {
 	// If no allowlist is configured, keep all records
 	if len(f.allowList) == 0 {
 		return true

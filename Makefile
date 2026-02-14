@@ -1,6 +1,6 @@
 # Makefile pour l'ETL Référentiel Administratif Français
 
-.PHONY: help download-data build run clean test
+.PHONY: help download-data build run clean test lint test-coverage coverage benchmark
 
 # Couleurs pour l'output
 COLOR_RESET = \033[0m
@@ -78,6 +78,16 @@ deps: ## Install dependencies
 test: ## Run tests
 	@echo "$(COLOR_YELLOW)Running tests...$(COLOR_RESET)"
 	@go test -v ./...
+
+lint: ## Run golangci-lint
+	@echo "$(COLOR_YELLOW)Running linter...$(COLOR_RESET)"
+	@if command -v golangci-lint >/dev/null 2>&1; then \
+		golangci-lint run; \
+	else \
+		echo "$(COLOR_YELLOW)golangci-lint not installed. Install with:$(COLOR_RESET)"; \
+		echo "  brew install golangci-lint  # macOS"; \
+		echo "  go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"; \
+	fi
 
 test-coverage: ## Run tests with coverage report
 	@echo "$(COLOR_YELLOW)Running tests with coverage...$(COLOR_RESET)"

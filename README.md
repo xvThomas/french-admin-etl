@@ -1,5 +1,11 @@
 # ETL - French Administrative Reference Data Loader
 
+[![CI Pipeline](https://github.com/xvThomas/french-admin-etl/actions/workflows/ci.yml/badge.svg)](https://github.com/xvThomas/french-admin-etl/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/xvThomas/french-admin-etl/branch/main/graph/badge.svg)](https://codecov.io/gh/xvThomas/french-admin-etl)
+[![Go Version](https://img.shields.io/badge/Go-1.24%2B-00ADD8?logo=go)](https://go.dev/)
+[![Go Report Card](https://goreportcard.com/badge/github.com/xvThomas/french-admin-etl)](https://goreportcard.com/report/github.com/xvThomas/french-admin-etl)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ETL tool in Go for loading French administrative reference data (communes, départements, régions, EPCI) into PostGIS.
 
 ## Prerequisites
@@ -78,6 +84,35 @@ make clean      # Clean generated files and downloaded data
 
 ```bash
 make help       # Show all available commands
+```
+
+## CI/CD & Quality Assurance
+
+This project includes a comprehensive GitHub Actions pipeline that runs on every push and pull request:
+
+- **Tests**: Automatic test execution with coverage reporting
+- **Security Scan**: Trivy vulnerability scanning for dependencies
+- **Linting**: Code quality checks with golangci-lint
+- **Build**: Binary compilation and artifact storage
+
+### Setup Instructions
+
+1. **Enable Codecov** (optional for coverage badge):
+   - Go to [codecov.io](https://codecov.io/) and sign in with GitHub
+   - Enable the repository `xvThomas/french-admin-etl`
+   - No token needed for public repos
+
+2. **View Results**:
+   - CI status: `Actions` tab in GitHub
+   - Security alerts: `Security` → `Code scanning` tab
+   - Coverage reports: Click the codecov badge
+
+### Local Quality Checks
+
+```bash
+make test              # Run tests locally
+make test-coverage     # Generate coverage report
+golangci-lint run      # Run linter (requires golangci-lint installation)
 ```
 
 ## Features

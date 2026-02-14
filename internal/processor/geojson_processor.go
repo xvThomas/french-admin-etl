@@ -9,19 +9,21 @@ import (
 
 	"french_admin_etl/internal/extractors"
 	"french_admin_etl/internal/infrastructure/config"
-	"french_admin_etl/internal/transformers"
 	"french_admin_etl/internal/model"
+	"french_admin_etl/internal/transformers"
 )
 
+// GeoJSONETLProcessor handles the ETL process for GeoJSON files with parallel processing.
 type GeoJSONETLProcessor[T any, E any] struct {
 	config             *config.Config
 	name               string                                   // name for logging
 	factory            func() T                                 // Factory function to create empty instances for JSON unmarshalling
-	extractor          *extractors.GeoJSONExtractor[T]               // Embedded extractor to read GeoJSON features
+	extractor          *extractors.GeoJSONExtractor[T]          // Embedded extractor to read GeoJSON features
 	geoJSONTransformer model.GeoJSONTransformer[T, E]           // Transformer to convert GeoJSON features to entities with WKB
 	entityLoader       model.EntityWithGeoJSONGeometryLoader[E] // Loader to load entities with WKB into the database
 }
 
+// NewGeoJSONETLProcessor creates a new GeoJSONETLProcessor with the provided configuration, name, factory, mapper, and loader.
 func NewGeoJSONETLProcessor[T any, E any](
 	config *config.Config,
 	name string,
@@ -39,6 +41,7 @@ func NewGeoJSONETLProcessor[T any, E any](
 	}
 }
 
+// Run executes the ETL process for the given GeoJSON file path, extracting features, transforming them into entities, and loading them into the database using parallel workers.
 func (l *GeoJSONETLProcessor[T, E]) Run(ctx context.Context, filePath string) error {
 	featureChan, err := l.extractor.Extract(ctx, filePath, l.config.BatchSize, l.factory)
 	if err != nil {

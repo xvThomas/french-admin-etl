@@ -1,3 +1,4 @@
+// Package main is the entry point for the french-admin-etl application.
 package main
 
 import (
@@ -116,7 +117,7 @@ func main() {
 	)
 
 	err = communePopulationProcess.Run(ctx, "./data/DS_RP_POPULATION_PRINC_2022_data.csv")
-	//err = communePopulationProcess.Run(ctx, "./data/test.csv")
+	// err = communePopulationProcess.Run(ctx, "./data/test.csv")
 	if err != nil {
 		slog.Error("❌ Failed to run commune population process", "error", err)
 		os.Exit(1)

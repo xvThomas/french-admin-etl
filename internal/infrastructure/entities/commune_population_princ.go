@@ -1,3 +1,4 @@
+// Package entities defines domain entities for French administrative data.
 package entities
 
 import (
@@ -9,6 +10,7 @@ import (
 	"strings"
 )
 
+// CommunePopulationPrincEntity represents commune population data by age and gender.
 type CommunePopulationPrincEntity struct {
 	Age         string // _T, Y15T24, Y20T64, Y25T39, Y40T54, Y55T64, Y65T79, Y_GE65, Y_GE80, Y_LT15, Y_LT20
 	CodeCommune string // 5-character code for communes
@@ -17,17 +19,23 @@ type CommunePopulationPrincEntity struct {
 	Population  int
 }
 
-var CommunePopulationPrincFilter = filters.NewCsvRecordFilter().AddToAllowList("GEO_OBJECT", []string{"COM", "ARM"})
+// CommunePopulationPrincFilter is a predefined filter that keeps only commune and arrondissement records.
+var CommunePopulationPrincFilter = filters.NewCsvRecordFilterFromAllowList(map[string][]string{
+	"GEO_OBJECT": {"COM", "ARM"},
+})
 
-type communePopulationMapper struct{}
+// CommunePopulationMapper maps CSV records to CommunePopulationPrincEntity.
+type CommunePopulationMapper struct{}
 
-func NewCommunePopulationMapper() *communePopulationMapper {
-	return &communePopulationMapper{}
+// NewCommunePopulationMapper creates a new mapper for commune population data.
+func NewCommunePopulationMapper() *CommunePopulationMapper {
+	return &CommunePopulationMapper{}
 }
 
-var _ model.Mapper[model.CSVRecord, CommunePopulationPrincEntity] = (*communePopulationMapper)(nil)
+var _ model.Mapper[model.CSVRecord, CommunePopulationPrincEntity] = (*CommunePopulationMapper)(nil)
 
-func (m *communePopulationMapper) Map(record model.CSVRecord) (*CommunePopulationPrincEntity, error) {
+// Map converts a CSV record to a CommunePopulationPrincEntity, with validation and error handling.
+func (m *CommunePopulationMapper) Map(record model.CSVRecord) (*CommunePopulationPrincEntity, error) {
 	age := record["AGE"]
 	if age != "_T" && age != "Y15T24" && age != "Y20T64" && age != "Y25T39" && age != "Y40T54" && age != "Y55T64" && age != "Y65T79" && age != "Y_GE65" && age != "Y_GE80" && age != "Y_LT15" && age != "Y_LT20" {
 		return nil, fmt.Errorf("invalid AGE, must be one of _T, Y15T24, Y20T64, Y25T39, Y40T54, Y55T64, Y65T79, Y_GE65, Y_GE80, Y_LT15, Y_LT20")
@@ -38,11 +46,11 @@ func (m *communePopulationMapper) Map(record model.CSVRecord) (*CommunePopulatio
 		return nil, fmt.Errorf("invalid GEO code, must be 5 characters for communes")
 	}
 
-	//geoObject := record["GEO_OBJECT"] // COM
-	//if geoObject != "COM" && geoObject != "ARM" {
-	//    slog.Warn("Skip record, ignored GEO_OBJECT", "record", record)
-	//	return nil, nil // Only keep code commune and arrondissment for population_princ
-	//}
+	// geoObject := record["GEO_OBJECT"] // COM
+	// if geoObject != "COM" && geoObject != "ARM" {
+	//     slog.Warn("Skip record, ignored GEO_OBJECT", "record", record)
+	// 	return nil, nil // Only keep code commune and arrondissment for population_princ
+	// }
 
 	sexe := record["SEX"]
 	// Validate sexe: must be _T (total), M (hommes), or F (femmes)

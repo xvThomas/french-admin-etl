@@ -7,13 +7,13 @@ import (
 	"sync"
 	"time"
 
-	filters "french_admin_etl/internal/Filters"
 	"french_admin_etl/internal/extractors"
 	"french_admin_etl/internal/infrastructure/config"
 	"french_admin_etl/internal/model"
 	"french_admin_etl/internal/transformers"
 )
 
+// CsvETLProcessor handles the ETL process for CSV files with parallel processing.
 type CsvETLProcessor[E any] struct {
 	config         *config.Config
 	name           string                        // name for logging
@@ -22,11 +22,12 @@ type CsvETLProcessor[E any] struct {
 	entityLoader   model.EntityLoader[E]         // Loader to load entities into the database
 }
 
+// NewCsvETLProcessor creates a new CsvETLProcessor with the provided configuration, name, delimiter, filter, mapper, and loader.
 func NewCsvETLProcessor[E any](
 	config *config.Config,
 	name string,
 	delimiter rune,
-	filter filters.CsvRecordFilter,
+	filter model.CsvRecordFilter,
 	mapper model.Mapper[model.CSVRecord, E],
 	loader model.EntityLoader[E],
 ) *CsvETLProcessor[E] {
@@ -39,6 +40,7 @@ func NewCsvETLProcessor[E any](
 	}
 }
 
+// Run executes the ETL process for the given CSV file path, extracting records, transforming them into entities, and loading them into the database using parallel workers.
 func (l *CsvETLProcessor[E]) Run(ctx context.Context, filePath string) error {
 	recordChan, err := l.extractor.Extract(ctx, filePath, l.config.BatchSize)
 	if err != nil {

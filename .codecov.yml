@@ -1,0 +1,21 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 70%
+        threshold: 5%
+    patch:
+      default:
+        target: 70%
+        threshold: 5%
+
+comment:
+  layout: "header, diff, flags, components, files, footer"
+  behavior: default
+  require_changes: false
+
+ignore:
+  - "**/*_test.go"
+  - "cmd/**"
+  - "migrations/**"
+  - "docs/**"

@@ -3,11 +3,12 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"french_admin_etl/internal/infrastructure/config"
 	"fmt"
+	"french_admin_etl/internal/infrastructure/config"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	// Import the pgx driver for database/sql
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -61,7 +62,7 @@ func NewDatabaseManager(config *config.Config, opts ...DatabaseManagerOption) (*
 	defer cancel()
 
 	if err := db.PingContext(ctx); err != nil {
-		db.Close()
+		_ = db.Close()
 		return nil, fmt.Errorf("failed to connect to database %s within %v: %w",
 			config.PostgresDatabase.ConnectionString(), config.PostgresDatabase.PingTimeout, err)
 	}
@@ -72,8 +73,12 @@ func NewDatabaseManager(config *config.Config, opts ...DatabaseManagerOption) (*
 	}
 
 	// Optimized configuration for ETL
-	poolConfig.MaxConns = int32(config.Workers)
-	poolConfig.MinConns = int32(config.Workers / 2)
+	// Validate workers count is within reasonable range for int32
+	if config.Workers < 1 || config.Workers > 10000 {
+		return nil, fmt.Errorf("workers count must be between 1 and 10000, got %d", config.Workers)
+	}
+	poolConfig.MaxConns = int32(config.Workers)     // #nosec G115 -- validated range ensures no overflow
+	poolConfig.MinConns = int32(config.Workers / 2) // #nosec G115 -- validated range ensures no overflow
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), poolConfig)
 	if err != nil {
@@ -89,7 +94,7 @@ func NewDatabaseManager(config *config.Config, opts ...DatabaseManagerOption) (*
 	// Apply options
 	for _, opt := range opts {
 		if err := opt(dm); err != nil {
-			db.Close()
+			_ = db.Close()
 			return nil, fmt.Errorf("failed to apply database option: %w", err)
 		}
 	}

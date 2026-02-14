@@ -14,7 +14,8 @@ type communeRepository struct {
 
 var _ model.EntityWithGeoJSONGeometryLoader[entities.CommuneEntity] = (*communeRepository)(nil)
 
-func NewCommuneRepository(dbManager *DatabaseManager) *communeRepository {
+// NewCommuneRepository creates a new instance of communeRepository with the provided DatabaseManager.
+func NewCommuneRepository(dbManager *DatabaseManager) model.EntityWithGeoJSONGeometryLoader[entities.CommuneEntity] {
 	return &communeRepository{
 		databaseManager: dbManager,
 	}
@@ -28,7 +29,7 @@ func (l *communeRepository) Load(
 	if err != nil {
 		return 0, err
 	}
-	defer tx.Rollback(ctx)
+	defer func() { _ = tx.Rollback(ctx) }()
 
 	// see ../../../migrations/003_create_base_tables_reg_admin.sql for table structure and indexes
 
@@ -51,7 +52,7 @@ func (l *communeRepository) Load(
 	// Use NULLIF to insert NULL if EPCI doesn't exist (avoids FK constraint violation)
 	stmt := `
 		INSERT INTO ref_admin.communes(code_insee_commune, nom_commune, code_insee_epci, code_insee_departement, code_insee_region, geom)
-		VALUES ($1, $2, 
+		VALUES ($1, $2,
 			CASE WHEN EXISTS(SELECT 1 FROM ref_admin.epci WHERE code_insee_epci = $3) THEN $3 ELSE NULL END,
 			$4, $5, ST_SetSRID(ST_GeomFromGeoJSON($6), 4326))
 		ON CONFLICT (code_insee_commune) DO UPDATE SET

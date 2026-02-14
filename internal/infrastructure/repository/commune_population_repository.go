@@ -15,7 +15,8 @@ type communePopulationRepository struct {
 
 var _ model.EntityLoader[entities.CommunePopulationPrincEntity] = (*communePopulationRepository)(nil)
 
-func NewCommunePopulationRepository(dbManager *DatabaseManager) *communePopulationRepository {
+// NewCommunePopulationRepository creates a new repository for loading commune population data.
+func NewCommunePopulationRepository(dbManager *DatabaseManager) model.EntityLoader[entities.CommunePopulationPrincEntity] {
 	return &communePopulationRepository{
 		databaseManager: dbManager,
 	}
@@ -27,40 +28,40 @@ type populationRecord struct {
 	annee       int
 	entityCount int // Number of original entities that contributed to this record
 	// Total population
-	pop   *int
-	pop_h *int
-	pop_f *int
+	pop  *int
+	popH *int
+	popF *int
 	// Population by age groups
-	pop_LT15    *int
-	pop_LT15_h  *int
-	pop_LT15_f  *int
-	pop_LT20    *int
-	pop_LT20_h  *int
-	pop_LT20_f  *int
-	pop_15T24   *int
-	pop_15T24_h *int
-	pop_15T24_f *int
-	pop_20T64   *int
-	pop_20T64_h *int
-	pop_20T64_f *int
-	pop_25T39   *int
-	pop_25T39_h *int
-	pop_25T39_f *int
-	pop_40T54   *int
-	pop_40T54_h *int
-	pop_40T54_f *int
-	pop_55T64   *int
-	pop_55T64_h *int
-	pop_55T64_f *int
-	pop_65T79   *int
-	pop_65T79_h *int
-	pop_65T79_f *int
-	pop_GE65    *int
-	pop_GE65_h  *int
-	pop_GE65_f  *int
-	pop_GE80    *int
-	pop_GE80_h  *int
-	pop_GE80_f  *int
+	popLT15   *int
+	popLT15H  *int
+	popLT15F  *int
+	popLT20   *int
+	popLT20H  *int
+	popLT20F  *int
+	pop15T24  *int
+	pop15T24H *int
+	pop15T24F *int
+	pop20T64  *int
+	pop20T64H *int
+	pop20T64F *int
+	pop25T39  *int
+	pop25T39H *int
+	pop25T39F *int
+	pop40T54  *int
+	pop40T54H *int
+	pop40T54F *int
+	pop55T64  *int
+	pop55T64H *int
+	pop55T64F *int
+	pop65T79  *int
+	pop65T79H *int
+	pop65T79F *int
+	popGE65   *int
+	popGE65H  *int
+	popGE65F  *int
+	popGE80   *int
+	popGE80H  *int
+	popGE80F  *int
 }
 
 // aggregatePopulationData groups entities by commune/year and aggregates by age/sex
@@ -90,132 +91,82 @@ func aggregatePopulationData(entities []entities.CommunePopulationPrincEntity) m
 	return records
 }
 
+// fieldSelector returns a pointer to the appropriate field based on age and sex
+type fieldSelector func(*populationRecord) **int
+
+// populationFieldMap maps (age, sex) combinations to record fields
+var populationFieldMap = map[string]map[string]fieldSelector{
+	"Y_LT15": {
+		"_T": func(r *populationRecord) **int { return &r.popLT15 },
+		"M":  func(r *populationRecord) **int { return &r.popLT15H },
+		"F":  func(r *populationRecord) **int { return &r.popLT15F },
+	},
+	"Y_LT20": {
+		"_T": func(r *populationRecord) **int { return &r.popLT20 },
+		"M":  func(r *populationRecord) **int { return &r.popLT20H },
+		"F":  func(r *populationRecord) **int { return &r.popLT20F },
+	},
+	"Y15T24": {
+		"_T": func(r *populationRecord) **int { return &r.pop15T24 },
+		"M":  func(r *populationRecord) **int { return &r.pop15T24H },
+		"F":  func(r *populationRecord) **int { return &r.pop15T24F },
+	},
+	"Y20T64": {
+		"_T": func(r *populationRecord) **int { return &r.pop20T64 },
+		"M":  func(r *populationRecord) **int { return &r.pop20T64H },
+		"F":  func(r *populationRecord) **int { return &r.pop20T64F },
+	},
+	"Y25T39": {
+		"_T": func(r *populationRecord) **int { return &r.pop25T39 },
+		"M":  func(r *populationRecord) **int { return &r.pop25T39H },
+		"F":  func(r *populationRecord) **int { return &r.pop25T39F },
+	},
+	"Y40T54": {
+		"_T": func(r *populationRecord) **int { return &r.pop40T54 },
+		"M":  func(r *populationRecord) **int { return &r.pop40T54H },
+		"F":  func(r *populationRecord) **int { return &r.pop40T54F },
+	},
+	"Y55T64": {
+		"_T": func(r *populationRecord) **int { return &r.pop55T64 },
+		"M":  func(r *populationRecord) **int { return &r.pop55T64H },
+		"F":  func(r *populationRecord) **int { return &r.pop55T64F },
+	},
+	"Y65T79": {
+		"_T": func(r *populationRecord) **int { return &r.pop65T79 },
+		"M":  func(r *populationRecord) **int { return &r.pop65T79H },
+		"F":  func(r *populationRecord) **int { return &r.pop65T79F },
+	},
+	"Y_GE65": {
+		"_T": func(r *populationRecord) **int { return &r.popGE65 },
+		"M":  func(r *populationRecord) **int { return &r.popGE65H },
+		"F":  func(r *populationRecord) **int { return &r.popGE65F },
+	},
+	"Y_GE80": {
+		"_T": func(r *populationRecord) **int { return &r.popGE80 },
+		"M":  func(r *populationRecord) **int { return &r.popGE80H },
+		"F":  func(r *populationRecord) **int { return &r.popGE80F },
+	},
+	"_T": {
+		"_T": func(r *populationRecord) **int { return &r.pop },
+		"M":  func(r *populationRecord) **int { return &r.popH },
+		"F":  func(r *populationRecord) **int { return &r.popF },
+	},
+}
+
 // setPopulationValue assigns population to the correct field based on age and sex
 func setPopulationValue(record *populationRecord, age, sex string, population int) {
-	// Helper to set value
-	setValue := func(field **int) {
-		*field = &population
+	ageMap, ageExists := populationFieldMap[age]
+	if !ageExists {
+		panic(fmt.Sprintf("invalid age group %q for record: %v", age, *record))
 	}
 
-	switch age {
-	case "Y_LT15":
-		switch sex {
-		case "_T":
-			setValue(&record.pop_LT15)
-		case "M":
-			setValue(&record.pop_LT15_h)
-		case "F":
-			setValue(&record.pop_LT15_f)
-		default:
-			panic(fmt.Sprintf("invalid sex: %v", *record))
-		}
-	case "Y_LT20":
-		switch sex {
-		case "_T":
-			setValue(&record.pop_LT20)
-		case "M":
-			setValue(&record.pop_LT20_h)
-		case "F":
-			setValue(&record.pop_LT20_f)
-		default:
-			panic(fmt.Sprintf("invalid sex: %v", *record))
-		}
-	case "Y15T24":
-		switch sex {
-		case "_T":
-			setValue(&record.pop_15T24)
-		case "M":
-			setValue(&record.pop_15T24_h)
-		case "F":
-			setValue(&record.pop_15T24_f)
-		default:
-			panic(fmt.Sprintf("invalid sex: %v", *record))
-		}
-	case "Y20T64":
-		switch sex {
-		case "_T":
-			setValue(&record.pop_20T64)
-		case "M":
-			setValue(&record.pop_20T64_h)
-		case "F":
-			setValue(&record.pop_20T64_f)
-		default:
-			panic(fmt.Sprintf("invalid sex: %v", *record))
-		}
-	case "Y25T39":
-		switch sex {
-		case "_T":
-			setValue(&record.pop_25T39)
-		case "M":
-			setValue(&record.pop_25T39_h)
-		case "F":
-			setValue(&record.pop_25T39_f)
-		default:
-			panic(fmt.Sprintf("invalid sex: %v", *record))
-		}
-	case "Y40T54":
-		switch sex {
-		case "_T":
-			setValue(&record.pop_40T54)
-		case "M":
-			setValue(&record.pop_40T54_h)
-		case "F":
-			setValue(&record.pop_40T54_f)
-		default:
-			panic(fmt.Sprintf("invalid sex: %v", *record))
-		}
-	case "Y55T64":
-		switch sex {
-		case "_T":
-			setValue(&record.pop_55T64)
-		case "M":
-			setValue(&record.pop_55T64_h)
-		case "F":
-			setValue(&record.pop_55T64_f)
-		default:
-			panic(fmt.Sprintf("invalid sex: %v", *record))
-		}
-	case "Y65T79":
-		switch sex {
-		case "_T":
-			setValue(&record.pop_65T79)
-		case "M":
-			setValue(&record.pop_65T79_h)
-		case "F":
-			setValue(&record.pop_65T79_f)
-
-		}
-	case "Y_GE65":
-		switch sex {
-		case "_T":
-			setValue(&record.pop_GE65)
-		case "M":
-			setValue(&record.pop_GE65_h)
-		case "F":
-			setValue(&record.pop_GE65_f)
-		}
-	case "Y_GE80":
-		switch sex {
-		case "_T":
-			setValue(&record.pop_GE80)
-		case "M":
-			setValue(&record.pop_GE80_h)
-		case "F":
-			setValue(&record.pop_GE80_f)
-		}
-	case "_T":
-		// Total population (all ages)
-		switch sex {
-		case "_T":
-			setValue(&record.pop)
-		case "M":
-			setValue(&record.pop_h)
-		case "F":
-			setValue(&record.pop_f)
-		}
-	default:
-		panic(fmt.Sprintf("invalid age group: %v", *record))
+	selector, sexExists := ageMap[sex]
+	if !sexExists {
+		panic(fmt.Sprintf("invalid sex %q for age %q in record: %v", sex, age, *record))
 	}
+
+	field := selector(record)
+	*field = &population
 }
 
 func (l *communePopulationRepository) Load(
@@ -244,12 +195,12 @@ func (l *communePopulationRepository) Load(
 	if err != nil {
 		return 0, err
 	}
-	defer tx.Rollback(ctx)
+	defer func() { _ = tx.Rollback(ctx) }()
 
 	// Prepare statement with all columns
 	stmt := `
 		INSERT INTO demography.population_commune(
-			code_insee_commune, annee, 
+			code_insee_commune, annee,
 			pop, pop_h, pop_f,
 			pop_LT15, pop_LT15_h, pop_LT15_f,
 			pop_LT20, pop_LT20_h, pop_LT20_f,
@@ -331,17 +282,17 @@ func (l *communePopulationRepository) Load(
 		// Insert record
 		_, err = tx.Exec(ctx, stmt,
 			record.codeCommune, record.annee,
-			record.pop, record.pop_h, record.pop_f,
-			record.pop_LT15, record.pop_LT15_h, record.pop_LT15_f,
-			record.pop_LT20, record.pop_LT20_h, record.pop_LT20_f,
-			record.pop_15T24, record.pop_15T24_h, record.pop_15T24_f,
-			record.pop_20T64, record.pop_20T64_h, record.pop_20T64_f,
-			record.pop_25T39, record.pop_25T39_h, record.pop_25T39_f,
-			record.pop_40T54, record.pop_40T54_h, record.pop_40T54_f,
-			record.pop_55T64, record.pop_55T64_h, record.pop_55T64_f,
-			record.pop_65T79, record.pop_65T79_h, record.pop_65T79_f,
-			record.pop_GE65, record.pop_GE65_h, record.pop_GE65_f,
-			record.pop_GE80, record.pop_GE80_h, record.pop_GE80_f,
+			record.pop, record.popH, record.popF,
+			record.popLT15, record.popLT15H, record.popLT15F,
+			record.popLT20, record.popLT20H, record.popLT20F,
+			record.pop15T24, record.pop15T24H, record.pop15T24F,
+			record.pop20T64, record.pop20T64H, record.pop20T64F,
+			record.pop25T39, record.pop25T39H, record.pop25T39F,
+			record.pop40T54, record.pop40T54H, record.pop40T54F,
+			record.pop55T64, record.pop55T64H, record.pop55T64F,
+			record.pop65T79, record.pop65T79H, record.pop65T79F,
+			record.popGE65, record.popGE65H, record.popGE65F,
+			record.popGE80, record.popGE80H, record.popGE80F,
 		)
 		if err != nil {
 			slog.Error("Insert error", "entity", "population", "commune", record.codeCommune, "year", record.annee, "error", err)

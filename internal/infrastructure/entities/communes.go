@@ -2,6 +2,7 @@ package entities
 
 import "french_admin_etl/internal/model"
 
+// CommuneProperties represents the properties of a commune in the GeoJSON file.
 type CommuneProperties struct {
 	Code        string `json:"code"`
 	Nom         string `json:"nom"`
@@ -10,8 +11,10 @@ type CommuneProperties struct {
 	Region      string `json:"region"`
 }
 
-type GeoJsonCommuneFeature = model.GeoJSONFeature[CommuneProperties]
+// GeoJSONCommuneFeature is a type alias for a GeoJSON feature with CommuneProperties.
+type GeoJSONCommuneFeature = model.GeoJSONFeature[CommuneProperties]
 
+// CommuneEntity represents the commune entity to be stored in the database.
 type CommuneEntity struct {
 	Code            string `json:"code_insee_commune"`
 	Nom             string `json:"nom_commune"`
@@ -20,17 +23,21 @@ type CommuneEntity struct {
 	CodeRegion      string `json:"code_insee_region"`
 }
 
+// CommuneWithGeometry combines the commune entity with its GeoJSON geometry for database insertion.
 type CommuneWithGeometry = model.EntityWithGeoJSONGeometry[CommuneEntity]
 
-type communeMapper struct{}
+// CommuneMapper is responsible for mapping CommuneProperties to CommuneEntity.
+type CommuneMapper struct{}
 
-func NewCommuneMapper() *communeMapper {
-	return &communeMapper{}
+// NewCommuneMapper creates a new mapper for commune data.
+func NewCommuneMapper() *CommuneMapper {
+	return &CommuneMapper{}
 }
 
-var _ model.Mapper[CommuneProperties, CommuneEntity] = (*communeMapper)(nil)
+var _ model.Mapper[CommuneProperties, CommuneEntity] = (*CommuneMapper)(nil)
 
-func (m *communeMapper) Map(input CommuneProperties) (*CommuneEntity, error) {
+// Map converts CommuneProperties to a CommuneEntity for database insertion.
+func (m *CommuneMapper) Map(input CommuneProperties) (*CommuneEntity, error) {
 	return &CommuneEntity{
 		Code:            input.Code,
 		Nom:             input.Nom,

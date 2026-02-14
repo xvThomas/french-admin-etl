@@ -14,7 +14,8 @@ type departementRepository struct {
 
 var _ model.EntityWithGeoJSONGeometryLoader[entities.DepartementEntity] = (*departementRepository)(nil)
 
-func NewDepartementRepository(dbManager *DatabaseManager) *departementRepository {
+// NewDepartementRepository creates a new instance of departementRepository with the provided DatabaseManager.
+func NewDepartementRepository(dbManager *DatabaseManager) model.EntityWithGeoJSONGeometryLoader[entities.DepartementEntity] {
 	return &departementRepository{
 		databaseManager: dbManager,
 	}
@@ -28,7 +29,7 @@ func (l *departementRepository) Load(
 	if err != nil {
 		return 0, err
 	}
-	defer tx.Rollback(ctx)
+	defer func() { _ = tx.Rollback(ctx) }()
 
 	// see ../../../migrations/003_create_base_tables_reg_admin.sql for table structure and indexes
 

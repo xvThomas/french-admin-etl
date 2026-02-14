@@ -1,3 +1,4 @@
+// Package extractors provides utilities for extracting data from various file formats.
 package extractors
 
 import (
@@ -8,23 +9,25 @@ import (
 	"log/slog"
 	"os"
 
-	filters "french_admin_etl/internal/Filters"
 	"french_admin_etl/internal/model"
 )
 
+// CSVExtractor extracts records from CSV files with configurable delimiters and filters.
 type CSVExtractor struct {
 	Delimiter rune
-	filter    filters.CsvRecordFilter
+	filter    model.CsvRecordFilter
 }
 
-func NewCSVExtractor(filter filters.CsvRecordFilter) *CSVExtractor {
+// NewCSVExtractor creates a new CSV extractor with comma as the default delimiter.
+func NewCSVExtractor(filter model.CsvRecordFilter) *CSVExtractor {
 	return &CSVExtractor{
 		Delimiter: ',', // Default delimiter
 		filter:    filter,
 	}
 }
 
-func NewCSVExtractorWithDelimiter(filter filters.CsvRecordFilter, delimiter rune) *CSVExtractor {
+// NewCSVExtractorWithDelimiter creates a new CSV extractor with a custom delimiter.
+func NewCSVExtractorWithDelimiter(filter model.CsvRecordFilter, delimiter rune) *CSVExtractor {
 	return &CSVExtractor{
 		Delimiter: delimiter,
 		filter:    filter,
@@ -33,6 +36,7 @@ func NewCSVExtractorWithDelimiter(filter filters.CsvRecordFilter, delimiter rune
 
 func (e *CSVExtractor) loadFile(filePath string) (file *os.File, reader *csv.Reader, headers []string, err error) {
 	// Open file for reading
+	// #nosec G304 -- filePath is controlled by the application, not user input
 	file, err = os.Open(filePath)
 	if err != nil {
 		return nil, nil, nil, err
@@ -46,7 +50,7 @@ func (e *CSVExtractor) loadFile(filePath string) (file *os.File, reader *csv.Rea
 	// Read header line to get column names
 	headers, err = reader.Read()
 	if err != nil {
-		file.Close()
+		_ = file.Close()
 		return nil, nil, nil, fmt.Errorf("error reading CSV header: %w", err)
 	}
 
@@ -86,18 +90,9 @@ func (e *CSVExtractor) parse(ctx context.Context, reader *csv.Reader, headers []
 		}
 
 		if e.filter != nil && !e.filter.Filter(record) {
-			//slog.Debug("Record filtered out", "line", lineNumber, "record", record)
+			// slog.Debug("Record filtered out", "line", lineNumber, "record", record)
 			continue
 		}
-
-		//if !strings.HasPrefix(record["GEO"], "75") {
-		//	slog.Warn("Skip GEO code", "value", record["GEO"])
-		//	continue
-		//}
-
-		//if record["SEX"] != "_T" {
-		//	continue
-		//
 
 		select {
 		case recordChan <- record:
@@ -107,6 +102,7 @@ func (e *CSVExtractor) parse(ctx context.Context, reader *csv.Reader, headers []
 	}
 }
 
+// Extract reads a CSV file and streams records through a channel with optional filtering.
 func (e *CSVExtractor) Extract(ctx context.Context, filePath string, batchSize int) (chan model.CSVRecord, error) {
 	file, reader, headers, err := e.loadFile(filePath)
 	if err != nil {
@@ -120,7 +116,7 @@ func (e *CSVExtractor) Extract(ctx context.Context, filePath string, batchSize i
 
 	go func() {
 		defer func() {
-			file.Close() // Close file when goroutine finishes reading
+			_ = file.Close() // Close file when goroutine finishes reading
 			close(recordChan)
 		}()
 		e.parse(ctx, reader, headers, recordChan)

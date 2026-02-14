@@ -14,7 +14,8 @@ type regionRepository struct {
 
 var _ model.EntityWithGeoJSONGeometryLoader[entities.RegionEntity] = (*regionRepository)(nil)
 
-func NewRegionRepository(dbManager *DatabaseManager) *regionRepository {
+// NewRegionRepository creates a new instance of regionRepository with the provided DatabaseManager.
+func NewRegionRepository(dbManager *DatabaseManager) model.EntityWithGeoJSONGeometryLoader[entities.RegionEntity] {
 	return &regionRepository{
 		databaseManager: dbManager,
 	}
@@ -26,7 +27,7 @@ func (l *regionRepository) Load(ctx context.Context, entities []entities.RegionW
 	if err != nil {
 		return 0, err
 	}
-	defer tx.Rollback(ctx)
+	defer func() { _ = tx.Rollback(ctx) }()
 
 	// see ../../../migrations/003_create_base_tables_reg_admin.sql for table structure and indexes
 

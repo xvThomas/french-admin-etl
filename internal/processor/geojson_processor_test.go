@@ -251,6 +251,6 @@ func TestGeoJSONETLProcessor_RunEmptyFeatureCollection(t *testing.T) {
 }
 
 // Helper function to write test files
-//func writeTestFile(path string, content []byte) error {
-//	return os.WriteFile(path, content, 0644)
-//}
+// func writeTestFile(path string, content []byte) error {
+// 	return os.WriteFile(path, content, 0644)
+// }

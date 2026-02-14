@@ -123,7 +123,8 @@ func TestCSVExtractor_Headers(t *testing.T) {
 	}
 
 	// Drain the channel
-	for range recordChan {
+	for record := range recordChan {
+		_ = record // Consume remaining records
 	}
 }
 
@@ -133,7 +134,7 @@ func TestCSVExtractor_DefaultDelimiter(t *testing.T) {
 	tmpFile := filepath.Join(tmpDir, "test.csv")
 
 	content := "name,age,city\nJohn,30,Paris\nJane,25,Lyon\n"
-	if err := os.WriteFile(tmpFile, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(tmpFile, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 
@@ -188,7 +189,8 @@ func TestCSVExtractor_ContextCancellation(t *testing.T) {
 	case _, ok := <-recordChan:
 		if ok {
 			// Still receiving, this is ok - drain until closed
-			for range recordChan {
+			for record := range recordChan {
+				_ = record // Consume remaining records
 			}
 		}
 	case <-timeout:
@@ -202,7 +204,7 @@ func TestCSVExtractor_MismatchedColumns(t *testing.T) {
 	tmpFile := filepath.Join(tmpDir, "mismatched.csv")
 
 	content := "col1,col2,col3\nvalue1,value2,value3\nvalue1,value2\nvalue1,value2,value3,value4\n"
-	if err := os.WriteFile(tmpFile, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(tmpFile, []byte(content), 0600); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 

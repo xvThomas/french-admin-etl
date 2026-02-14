@@ -298,18 +298,19 @@ func TestCsvETLProcessor_RunLargeFile(t *testing.T) {
 	largeFile := filepath.Join(tmpDir, "large.csv")
 
 	// Create file with multiple records
+	// #nosec G304 -- largeFile is controlled by the application, not user input
 	f, err := os.Create(largeFile)
 	if err != nil {
 		t.Fatalf("Failed to create large file: %v", err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	// Write header
-	f.WriteString("AGE;GEO;GEO_OBJECT;RP_MEASURE;SEX;TIME_PERIOD;OBS_VALUE\n")
+	_, _ = f.WriteString("AGE;GEO;GEO_OBJECT;RP_MEASURE;SEX;TIME_PERIOD;OBS_VALUE\n")
 
 	// Write 1000 records
 	for i := 0; i < 1000; i++ {
-		f.WriteString("Y_GE80;75101;COM;POP;_T;2022;100\n")
+		_, _ = f.WriteString("Y_GE80;75101;COM;POP;_T;2022;100\n")
 	}
 
 	config := &config.Config{
@@ -333,5 +334,5 @@ func TestCsvETLProcessor_RunLargeFile(t *testing.T) {
 
 // Helper function to write test files
 func writeTestFile(path string, content []byte) error {
-	return os.WriteFile(path, content, 0644)
+	return os.WriteFile(path, content, 0600)
 }

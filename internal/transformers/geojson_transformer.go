@@ -9,6 +9,7 @@ type geojsonTransformer[TInput any, TOutput any] struct {
 	mapper model.Mapper[TInput, TOutput]
 }
 
+// NewGeoJSONTransformer creates a new GeoJSONTransformer with the provided mapper.
 func NewGeoJSONTransformer[TInput any, TOutput any](mapper model.Mapper[TInput, TOutput]) model.GeoJSONTransformer[TInput, TOutput] {
 	return &geojsonTransformer[TInput, TOutput]{mapper: mapper}
 }

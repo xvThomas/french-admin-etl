@@ -1,3 +1,4 @@
+// Package config handles loading and managing configuration from environment variables.
 package config
 
 import (
@@ -7,12 +8,14 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Config holds the application configuration.
 type Config struct {
 	PostgresDatabase PostgresDatabase
 	Workers          int `env:"ETL_WORKERS" envDefault:"4"`
 	BatchSize        int `env:"ETL_BATCH_SIZE" envDefault:"1000"`
 }
 
+// PostgresDatabase holds PostgreSQL database configuration.
 type PostgresDatabase struct {
 	Host            string `env:"POSTGRES_HOST" envDefault:"localhost"`
 	Port            int    `env:"POSTGRES_PORT" envDefault:"5432"`
@@ -27,6 +30,7 @@ type PostgresDatabase struct {
 	PingTimeout     int    `env:"POSTGRES_PING_TIMEOUT_S" envDefault:"5"`
 }
 
+// NewPostgresDatabase creates a new PostgresDatabase configuration with default values.
 func NewPostgresDatabase(host string, port int, database, user, password string) *PostgresDatabase {
 	return &PostgresDatabase{
 		Host:            host,
@@ -43,11 +47,13 @@ func NewPostgresDatabase(host string, port int, database, user, password string)
 	}
 }
 
+// ConnectionString returns the PostgreSQL connection string.
 func (dc *PostgresDatabase) ConnectionString() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
 		dc.User, dc.Password, dc.Host, dc.Port, dc.Database, dc.SSLMode)
 }
 
+// Load reads configuration from environment variables and .env file.
 func Load() (*Config, error) {
 	// Load .env (silently ignored if it doesn't exist)
 	_ = godotenv.Load()

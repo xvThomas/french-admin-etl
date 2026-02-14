@@ -14,7 +14,8 @@ type epciRepository struct {
 
 var _ model.EntityWithGeoJSONGeometryLoader[entities.EPCIEntity] = (*epciRepository)(nil)
 
-func NewEPCIRepository(dbManager *DatabaseManager) *epciRepository {
+// NewEPCIRepository creates a new instance of epciRepository with the provided DatabaseManager.
+func NewEPCIRepository(dbManager *DatabaseManager) model.EntityWithGeoJSONGeometryLoader[entities.EPCIEntity] {
 	return &epciRepository{
 		databaseManager: dbManager,
 	}
@@ -26,7 +27,7 @@ func (l *epciRepository) Load(ctx context.Context, entities []entities.EPCIWithG
 	if err != nil {
 		return 0, err
 	}
-	defer tx.Rollback(ctx)
+	defer func() { _ = tx.Rollback(ctx) }()
 
 	// see ../../../migrations/003_create_base_tables_reg_admin.sql for table structure and indexes
 

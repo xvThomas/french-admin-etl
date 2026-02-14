@@ -1,3 +1,4 @@
+// Package logger provides colored console logging with configurable log levels.
 package logger
 
 import (
@@ -27,6 +28,7 @@ type ColorHandler struct {
 	opts    *slog.HandlerOptions
 }
 
+// NewColorHandler creates a new colored log handler for terminal output.
 func NewColorHandler(w io.Writer, opts *slog.HandlerOptions) *ColorHandler {
 	if opts == nil {
 		opts = &slog.HandlerOptions{}
@@ -38,10 +40,12 @@ func NewColorHandler(w io.Writer, opts *slog.HandlerOptions) *ColorHandler {
 	}
 }
 
+// Enabled reports whether the handler handles records at the given level.
 func (h *ColorHandler) Enabled(ctx context.Context, level slog.Level) bool {
 	return h.handler.Enabled(ctx, level)
 }
 
+// WithAttrs returns a new ColorHandler with the given attributes added.
 func (h *ColorHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
 	return &ColorHandler{
 		handler: h.handler.WithAttrs(attrs),
@@ -50,6 +54,7 @@ func (h *ColorHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
 	}
 }
 
+// WithGroup returns a new ColorHandler with the given group name added.
 func (h *ColorHandler) WithGroup(name string) slog.Handler {
 	return &ColorHandler{
 		handler: h.handler.WithGroup(name),
@@ -58,7 +63,8 @@ func (h *ColorHandler) WithGroup(name string) slog.Handler {
 	}
 }
 
-func (h *ColorHandler) Handle(ctx context.Context, r slog.Record) error {
+// Handle formats and writes a log record with color coding.
+func (h *ColorHandler) Handle(_ context.Context, r slog.Record) error {
 	// Get color based on level
 	levelColor := getLevelColor(r.Level)
 
@@ -102,10 +108,11 @@ func getLevelColor(level slog.Level) string {
 	}
 }
 
+// Logger is the global logger instance used throughout the application.
 var Logger *slog.Logger
 
 func init() {
-	godotenv.Load()
+	_ = godotenv.Load()
 	level := getLogLevel()
 
 	opts := &slog.HandlerOptions{
@@ -117,12 +124,13 @@ func init() {
 	logFormat := os.Getenv("LOG_FORMAT")
 	noColor := os.Getenv("NO_COLOR") == "TRUE"
 
-	if logFormat == "json" {
+	switch {
+	case logFormat == "json":
 		handler = slog.NewJSONHandler(os.Stdout, opts)
-	} else if noColor {
+	case noColor:
 		// Use standard text handler without colors
 		handler = slog.NewTextHandler(os.Stdout, opts)
-	} else {
+	default:
 		// Use colored handler (default)
 		handler = NewColorHandler(os.Stdout, opts)
 	}
@@ -147,6 +155,7 @@ func getLogLevel() slog.Level {
 	}
 }
 
+// GetLogger returns the global logger instance.
 func GetLogger() *slog.Logger {
 	return Logger
 }
