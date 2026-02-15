@@ -376,7 +376,9 @@ func cleanEnv(t *testing.T) {
 		"POSTGRES_PING_TIMEOUT_S",
 	}
 	for _, key := range envVars {
-		os.Unsetenv(key)
+		if err := os.Unsetenv(key); err != nil {
+			t.Errorf("Failed to unset %s: %v", key, err)
+		}
 	}
 }
 
@@ -384,9 +386,14 @@ func cleanEnv(t *testing.T) {
 func setEnv(t *testing.T, vars map[string]string) {
 	t.Helper()
 	for key, value := range vars {
-		os.Setenv(key, value)
+		if err := os.Setenv(key, value); err != nil {
+			t.Fatalf("Failed to set %s: %v", key, err)
+		}
+		k := key // Capture for closure
 		t.Cleanup(func() {
-			os.Unsetenv(key)
+			if err := os.Unsetenv(k); err != nil {
+				t.Errorf("Failed to unset %s: %v", k, err)
+			}
 		})
 	}
 }

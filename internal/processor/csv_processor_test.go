@@ -2,7 +2,6 @@ package processor
 
 import (
 	"context"
-	"log"
 	"os"
 	"path/filepath"
 	"testing"
@@ -22,10 +21,6 @@ func NewMockPopulationEntityLoader() *mockPopulationEntityLoader {
 }
 
 func (m *mockPopulationEntityLoader) Load(_ context.Context, entities []entities.CommunePopulationPrincEntity) (int, error) {
-	for _, entity := range entities {
-		log.Printf("Loaded entity: Age=%s, CodeCommune=%s, Sexe=%s, Annee=%d, Population=%d",
-			entity.Age, entity.CodeCommune, entity.Sexe, entity.Annee, entity.Population)
-	}
 	return len(entities), nil
 }
 
