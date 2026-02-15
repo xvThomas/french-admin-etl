@@ -8,6 +8,8 @@ bin/
 # Fichiers de test
 *.test
 *.out
+coverage.html
+coverage.out
 
 # Dépendances
 vendor/

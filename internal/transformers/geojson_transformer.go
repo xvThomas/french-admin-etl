@@ -21,10 +21,6 @@ func (t *geojsonTransformer[TInput, TOutput]) Transform(features []model.GeoJSON
 		if err != nil {
 			return nil, err
 		}
-		if geomJSON == "" {
-			slog.Warn("Skip feature with empty geometry", "feature", feature)
-			continue
-		}
 
 		entity, err := t.mapper.Map(feature.Properties)
 		if entity == nil {
