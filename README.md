@@ -8,6 +8,12 @@
 
 ETL tool in Go for loading French administrative reference data (communes, départements, régions, EPCI) and demographic population data into PostGIS.
 
+**Data sources:**
+
+- https://adresse.data.gouv.fr/data/contours-administratifs/2023/geojson
+
+- https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_POPULATION_PRINC
+
 ## Prerequisites
 
 - **Go 1.21+**
@@ -123,8 +129,8 @@ golangci-lint run      # Run linter (requires golangci-lint installation)
 
 The ETL automatically creates the necessary tables with PostGIS geometry columns and spatial indexes. Tables created include:
 
-- **Administrative data**: `communes`, `departements`, `regions`, `epci` with their respective administrative and geometric properties
-- **Demographic data**: `commune_population` with population statistics by age groups and gender for each commune
+- **Administrative data**: `communes`, `departements`, `regions`, `epci` with their respective administrative and geometric properties (`ref_admin` schema)
+- **Demographic data**: `commune_population` with population statistics by age groups and gender for each commune (`demography` schema)
 
 ## Performance Tuning
 
