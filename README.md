@@ -36,7 +36,6 @@ POSTGRES_PORT=5432         # Database port
 POSTGRES_USER=admin        # Database user
 POSTGRES_PASSWORD=password # Database password
 POSTGRES_DB=mapbot         # Database name
-POSTGRES_DATA_SCHEMA=public # Target schema (default: public)
 
 # Optional PostgreSQL Settings
 # POSTGRES_SSLMODE=disable           # SSL mode: disable, require, verify-ca, verify-full
