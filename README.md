@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/xvThomas/french-admin-etl/branch/main/graph/badge.svg)](https://codecov.io/gh/xvThomas/french-admin-etl)
 [![Go Version](https://img.shields.io/badge/Go-1.24%2B-00ADD8?logo=go)](https://go.dev/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xvThomas/french-admin-etl)](https://goreportcard.com/report/github.com/xvThomas/french-admin-etl)
+[![Trivy Security Scan](https://github.com/xvThomas/french-admin-etl/actions/workflows/ci.yml/badge.svg?event=push&job=security)](https://github.com/xvThomas/french-admin-etl/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ETL tool in Go for loading French administrative reference data (communes, départements, régions, EPCI) and demographic population data into PostGIS.
